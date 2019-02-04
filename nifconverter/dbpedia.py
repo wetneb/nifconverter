@@ -71,7 +71,6 @@ class ToDBpediaConverter(URIConverter):
            VALUES ?uri {{ {uris} }}
         }}
         """.format(uris=' '.join('<{}>'.format(uri) for uri in uris))
-        print(sparql_query)
 
         r = requests.get('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
         r.raise_for_status()

@@ -5,3 +5,5 @@ nifconverter
 
 Utility to translate NIF files across identifier schemes, for instance between DBpedia and Wikidata.
 
+This is a work in progress - it does not have a CLI yet. See `example.py` for an example invocation.
+
