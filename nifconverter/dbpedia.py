@@ -2,6 +2,7 @@ import requests
 from .uriconverter import URIConverter
 
 class FromDBpediaConverter(URIConverter):
+    batch_size = 20
     dbpedia_prefix = 'http://dbpedia.org/resource/'
 
     def __init__(self, target_prefix='http://en.wikipedia.org/wiki/'):
@@ -43,6 +44,7 @@ class FromDBpediaConverter(URIConverter):
         return mapping
 
 class ToDBpediaConverter(URIConverter):
+    batch_size = 20
     dbpedia_prefix = 'http://dbpedia.org/resource/'
 
     def __init__(self, source_prefix='http://www.wikidata.org/entity/'):

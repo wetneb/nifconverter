@@ -30,6 +30,6 @@ class NIFTranslatorTest(unittest.TestCase):
         translator = NIFTranslator(converter)
 
         translator.translate_collection(self.dbpedia_nif)
-        self.dbpedia_nif.dump('/tmp/wp.ttl')
 
         self.assertEqual(self.wikipedia_nif, self.dbpedia_nif)
+
