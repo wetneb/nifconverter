@@ -5,9 +5,9 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - pip install pytest-cov coveralls -r requirements.txt
+  - pip install pytest coveralls -r requirements.txt
 script:
-  - pytest --cov=nifconverter
+  - coverage run --source=nifconverter --omit="*/tests/*" -m py.test
 
 after_success:
   - coveralls
