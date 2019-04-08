@@ -5,6 +5,7 @@ from .uriconverter import URIConverter
 class FromDBpediaConverter(URIConverter):
     batch_size = 20
     dbpedia_prefix = 'http://dbpedia.org/resource/'
+    dbpedia_page_prefix = 'http://dbpedia.org/page/'
 
     def __init__(self, target_prefix='http://en.wikipedia.org/wiki/'):
         """
@@ -16,14 +17,14 @@ class FromDBpediaConverter(URIConverter):
         self.target_prefix = target_prefix
 
     def is_convertible(self, uri):
-        return uri.startswith(self.dbpedia_prefix)
+        return uri.startswith(self.dbpedia_prefix) or uri.startswith(self.dbpedia_page_prefix)
 
     def convert(self, uris):
         """
         This uses DBpedia's SPARQL endpoint to convert the identifiers.
         """
         decoded_uris = {
-            uri:unquote(uri).replace(' ','_')
+            uri:unquote(uri).replace(' ','_').replace(self.dbpedia_page_prefix, self.dbpedia_prefix)
             for uri in uris
         }
 

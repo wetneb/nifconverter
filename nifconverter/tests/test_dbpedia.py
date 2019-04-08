@@ -7,12 +7,13 @@ class FromDBpediaConverterTest(unittest.TestCase):
         converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
         self.assertTrue(converter.is_convertible('http://dbpedia.org/resource/Douglas_Adams'))
         self.assertFalse(converter.is_convertible('http://en.wikipedia.org/wiki/Douglas_Adams'))
+        self.assertTrue(converter.is_convertible('http://dbpedia.org/page/Nebraska_Cornhuskers_football'))
 
     def test_to_wikidata(self):
         converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
 
         expected_mapping = {
-            'http://dbpedia.org/resource/University_of_Oxford':'http://www.wikidata.org/entity/Q34433',
+            'http://dbpedia.org/page/Nebraska_Cornhuskers_football':'http://www.wikidata.org/entity/Q6984693',
             'http://dbpedia.org/resource/Douglas_Adams': 'http://www.wikidata.org/entity/Q42',
             'http://dbpedia.org/resource/Fran%C3%A7ois_Legault': 'http://www.wikidata.org/entity/Q3085147',
             'http://dbpedia.org/resource/François_Legault': 'http://www.wikidata.org/entity/Q3085147',
