@@ -1,6 +1,6 @@
-import requests
 from urllib.parse import unquote
 from .uriconverter import URIConverter
+from .utils import retry_request
 
 class FromDBpediaConverter(URIConverter):
     batch_size = 20
@@ -35,7 +35,7 @@ class FromDBpediaConverter(URIConverter):
         }}
         """.format(uris=' '.join({'<{}>'.format(uri) for uri in decoded_uris.values()}))
 
-        r = requests.get('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
+        r = retry_request('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
         r.raise_for_status()
         results = r.json()['results']
 
@@ -46,11 +46,39 @@ class FromDBpediaConverter(URIConverter):
             if uri.startswith(self.target_prefix):
                 mapping[dbp] = uri
 
+        # Additionally, try to resolve redirected resources
+        missing_dbps = set(decoded_uris.values()) - set(mapping.keys())
+        redirecting_uris = {}
+        for missing_uri in missing_dbps:
+            redirect = self._get_redirect(missing_uri.replace(self.dbpedia_prefix, self.dbpedia_page_prefix))
+            if redirect:
+                redirecting_uris[missing_uri] = redirect
+
+        if redirecting_uris:
+            redirect_mapping = self.convert(redirecting_uris.values())
+            mapping.update({
+                decoded_uri:redirect_mapping[redirected_uri]
+                for decoded_uri, redirected_uri in redirecting_uris.items()
+                if redirected_uri in redirect_mapping
+            })
+
         return {
             uri:mapping[decoded_uri]
             for uri, decoded_uri in decoded_uris.items()
             if decoded_uri in mapping
         }
+
+    def _get_redirect(self, url):
+        """
+        Checks if a URL redirects to another URL, in
+        which case the new URL is returned. Otherwise None is returned.
+        """
+        # Sadly a HEAD request does not work for obscure encoding reasons…
+        # See accompanying test case
+        req = retry_request(url)
+        location = req.url
+        if location and location != url:
+            return location
 
 class ToDBpediaConverter(URIConverter):
     batch_size = 20
@@ -81,7 +109,7 @@ class ToDBpediaConverter(URIConverter):
         }}
         """.format(uris=' '.join('<{}>'.format(uri) for uri in uris))
 
-        r = requests.get('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
+        r = retry_request('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
         r.raise_for_status()
         results = r.json()['results']
 

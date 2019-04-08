@@ -2,3 +2,4 @@ requests
 pynif
 click
 pytest
+requests_mock

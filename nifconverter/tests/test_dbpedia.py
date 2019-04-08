@@ -1,25 +1,36 @@
 import unittest
 from nifconverter.dbpedia import FromDBpediaConverter
 from nifconverter.dbpedia import ToDBpediaConverter
+from urllib.parse import quote
 
 class FromDBpediaConverterTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
+        
     def test_is_convertible(self):
-        converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
-        self.assertTrue(converter.is_convertible('http://dbpedia.org/resource/Douglas_Adams'))
-        self.assertFalse(converter.is_convertible('http://en.wikipedia.org/wiki/Douglas_Adams'))
-        self.assertTrue(converter.is_convertible('http://dbpedia.org/page/Nebraska_Cornhuskers_football'))
+        self.assertTrue(self.converter.is_convertible('http://dbpedia.org/resource/Douglas_Adams'))
+        self.assertFalse(self.converter.is_convertible('http://en.wikipedia.org/wiki/Douglas_Adams'))
+        self.assertTrue(self.converter.is_convertible('http://dbpedia.org/page/Nebraska_Cornhuskers_football'))
 
     def test_to_wikidata(self):
-        converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
-
         expected_mapping = {
-            'http://dbpedia.org/page/Nebraska_Cornhuskers_football':'http://www.wikidata.org/entity/Q6984693',
+            # Simple case
             'http://dbpedia.org/resource/Douglas_Adams': 'http://www.wikidata.org/entity/Q42',
+            # With alternate prefix
+            'http://dbpedia.org/page/Nebraska_Cornhuskers_football':'http://www.wikidata.org/entity/Q6984693',
+            # For escaping
             'http://dbpedia.org/resource/Fran%C3%A7ois_Legault': 'http://www.wikidata.org/entity/Q3085147',
+            # Without escaping, with unicode character
             'http://dbpedia.org/resource/François_Legault': 'http://www.wikidata.org/entity/Q3085147',
+            # With redirect
+            'http://dbpedia.org/resource/Gio_Gonzalez': 'http://www.wikidata.org/entity/Q1525217',
         }
-        mapping = converter.convert(expected_mapping.keys())
+        mapping = self.converter.convert(expected_mapping.keys())
         self.assertEqual(expected_mapping, mapping)
+        
+    def test_redirects_to(self):
+        self.assertEqual(self.converter._get_redirect('http://dbpedia.org/page/Gio_Gonzalez'), 'http://dbpedia.org/page/Gio_Gonz%C3%A1lez')
 
 class ToDBpediaConverterTest(unittest.TestCase):
     def test_is_convertible(self):
