@@ -1,4 +1,5 @@
 import requests
+from urllib.parse import unquote
 from .uriconverter import URIConverter
 
 class FromDBpediaConverter(URIConverter):
@@ -21,14 +22,17 @@ class FromDBpediaConverter(URIConverter):
         """
         This uses DBpedia's SPARQL endpoint to convert the identifiers.
         """
-        uris = [uri.replace(' ','_') for uri in uris]
+        decoded_uris = {
+            uri:unquote(uri).replace(' ','_')
+            for uri in uris
+        }
 
         sparql_query = """
         SELECT ?uri ?dbp WHERE {{
            ?dbp owl:sameAs ?uri.
            VALUES ?dbp {{ {uris} }}
         }}
-        """.format(uris=' '.join('<{}>'.format(uri) for uri in uris))
+        """.format(uris=' '.join({'<{}>'.format(uri) for uri in decoded_uris.values()}))
 
         r = requests.get('http://dbpedia.org/sparql/', {'query':sparql_query, 'format':'json'})
         r.raise_for_status()
@@ -41,7 +45,11 @@ class FromDBpediaConverter(URIConverter):
             if uri.startswith(self.target_prefix):
                 mapping[dbp] = uri
 
-        return mapping
+        return {
+            uri:mapping[decoded_uri]
+            for uri, decoded_uri in decoded_uris.items()
+            if decoded_uri in mapping
+        }
 
 class ToDBpediaConverter(URIConverter):
     batch_size = 20
