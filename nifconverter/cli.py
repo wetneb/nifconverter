@@ -26,7 +26,7 @@ def main(mode, infile, outfile, format):
     across knowledge bases. For instance, the following will convert
     a NIF file with DBpedia identifiers to a NIF file with Wikidata identifiers:
 
-       nivconvert --mode dbr:wd -i dbpedia_nif.ttl -o wikidata_nif.ttl
+       nifconverter --mode dbr:wd -i dbpedia_nif.ttl -o wikidata_nif.ttl
 
     """
 
