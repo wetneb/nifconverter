@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 import unittest
 from nifconverter.dbpedia import FromDBpediaConverter
 from nifconverter.dbpedia import ToDBpediaConverter
