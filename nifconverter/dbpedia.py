@@ -73,7 +73,7 @@ class FromDBpediaConverter(URIConverter):
         Checks if a URL redirects to another URL, in
         which case the new URL is returned. Otherwise None is returned.
         """
-        # Sadly a HEAD request does not work for obscure encoding reasons…
+        # Sadly a HEAD request does not work for obscure encoding reasons...
         # See accompanying test case
         req = retry_request(url)
         location = req.url

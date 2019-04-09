@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import unittest
 from nifconverter.dbpedia import FromDBpediaConverter
 from nifconverter.dbpedia import ToDBpediaConverter
@@ -7,7 +9,7 @@ class FromDBpediaConverterTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.converter = FromDBpediaConverter('http://www.wikidata.org/entity/')
-        
+
     def test_is_convertible(self):
         self.assertTrue(self.converter.is_convertible('http://dbpedia.org/resource/Douglas_Adams'))
         self.assertFalse(self.converter.is_convertible('http://en.wikipedia.org/wiki/Douglas_Adams'))
@@ -28,7 +30,7 @@ class FromDBpediaConverterTest(unittest.TestCase):
         }
         mapping = self.converter.convert(expected_mapping.keys())
         self.assertEqual(expected_mapping, mapping)
-        
+
     def test_redirects_to(self):
         self.assertEqual(self.converter._get_redirect('http://dbpedia.org/page/Gio_Gonzalez'), 'http://dbpedia.org/page/Gio_Gonz%C3%A1lez')
 
