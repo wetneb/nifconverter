@@ -1,4 +1,8 @@
-from urllib.parse import unquote
+try:
+    from urllib.parse import unquote
+except ImportError:
+    from urllib import unquote
+
 from .uriconverter import URIConverter
 from .utils import retry_request
 
