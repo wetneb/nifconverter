@@ -3,7 +3,10 @@
 import unittest
 from nifconverter.dbpedia import FromDBpediaConverter
 from nifconverter.dbpedia import ToDBpediaConverter
-from urllib.parse import quote
+try:
+    from urllib.parse import quote
+except ImportError:
+    from urllib import quote
 
 class FromDBpediaConverterTest(unittest.TestCase):
     @classmethod
