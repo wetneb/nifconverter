@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 try:
     from urllib.parse import unquote
 except ImportError:
