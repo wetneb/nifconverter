@@ -30,6 +30,8 @@ class FromDBpediaConverterTest(unittest.TestCase):
             'http://dbpedia.org/resource/Fran%C3%A7ois_Legault': 'http://www.wikidata.org/entity/Q3085147',
             # Without escaping, with unicode character
             'http://dbpedia.org/resource/François_Legault': 'http://www.wikidata.org/entity/Q3085147',
+            # Without escaping, with quotes
+            'http://dbpedia.org/page/Toys_%22R%22_Us': 'http://www.wikidata.org/entity/Q696334',
             # With redirect
             'http://dbpedia.org/resource/Gio_Gonzalez': 'http://www.wikidata.org/entity/Q1525217',
         }

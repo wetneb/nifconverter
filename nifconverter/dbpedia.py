@@ -5,6 +5,7 @@ try:
 except ImportError:
     from urllib import unquote
 
+import requests.exceptions
 from .uriconverter import URIConverter
 from .utils import retry_request
 
@@ -30,7 +31,7 @@ class FromDBpediaConverter(URIConverter):
         This uses DBpedia's SPARQL endpoint to convert the identifiers.
         """
         decoded_uris = {
-            uri:unquote(uri).replace(' ','_').replace(self.dbpedia_page_prefix, self.dbpedia_prefix)
+            uri:unquote(uri).replace(' ','_').replace('"','%22').replace(self.dbpedia_page_prefix, self.dbpedia_prefix)
             for uri in uris
         }
 
@@ -81,7 +82,10 @@ class FromDBpediaConverter(URIConverter):
         """
         # Sadly a HEAD request does not work for obscure encoding reasons...
         # See accompanying test case
-        req = retry_request(url)
+        try:
+            req = retry_request(url)
+        except requests.exceptions.RequestException:
+            return
         location = req.url
         if location and location != url:
             return location
@@ -106,7 +110,7 @@ class ToDBpediaConverter(URIConverter):
         """
         This uses DBpedia's SPARQL endpoint to convert the identifiers.
         """
-        uris = [uri.replace(' ','_') for uri in uris]
+        uris = [uri.replace(' ','_').replace('"','%22') for uri in uris]
 
         sparql_query = """
         SELECT ?uri ?dbp WHERE {{
