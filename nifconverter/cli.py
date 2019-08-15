@@ -1,8 +1,8 @@
 import click
 import sys
 from pynif import NIFCollection
-from nifconverter.dbpedia import FromDBpediaConverter
-from nifconverter.dbpedia import ToDBpediaConverter
+from nifconverter.dbpedia_sparql import FromDBpediaConverter
+from nifconverter.dbpedia_sparql import ToDBpediaConverter
 from nifconverter.translator import NIFTranslator
 
 registered_converters = {

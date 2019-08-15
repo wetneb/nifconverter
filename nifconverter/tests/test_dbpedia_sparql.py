@@ -3,8 +3,8 @@
 from __future__ import unicode_literals
 
 import unittest
-from nifconverter.dbpedia import FromDBpediaConverter
-from nifconverter.dbpedia import ToDBpediaConverter
+from nifconverter.dbpedia_sparql import FromDBpediaConverter
+from nifconverter.dbpedia_sparql import ToDBpediaConverter
 try:
     from urllib.parse import quote
 except ImportError:
