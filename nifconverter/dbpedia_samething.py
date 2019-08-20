@@ -1,11 +1,13 @@
 import itertools
+
+from nifconverter.settings import SAME_THING_SERVICE_URL
+from nifconverter.uriconverter import URIConverter
+from nifconverter.utils import retry_request, fetch_redirecting_uris
+
 try:
     from urllib.parse import unquote
 except ImportError:
     from urllib import unquote
-
-from nifconverter.uriconverter import URIConverter
-from nifconverter.utils import retry_request, DBPEDIA_PAGE_PREFIX, DBPEDIA_PREFIX, fetch_redirecting_uris
 
 
 class SameThingConverter(URIConverter):
@@ -34,22 +36,18 @@ class SameThingConverter(URIConverter):
         Returns the converted URI or None if the concept does
         not exist in the target domain.
         """
-        # todo: implement URI normalization in Same Thing Service
-        normalized_uri = unquote(uri).replace(' ', '_').replace('"', '%22').replace(
-            DBPEDIA_PAGE_PREFIX, DBPEDIA_PREFIX
-        )
         resp = retry_request(
-            'https://global.dbpedia.org/same-thing/lookup/',
+            SAME_THING_SERVICE_URL,
             {
                 'meta': 'off',
-                'uri': normalized_uri
+                'uri': uri
             }
         )
         if resp.status_code == 404:
             # Additionally, try to resolve redirected resources
-            redirecting_uris = fetch_redirecting_uris([normalized_uri], [None])
+            redirecting_uris = fetch_redirecting_uris([uri], [None])
             if redirecting_uris:
-                return self.convert_one(redirecting_uris[normalized_uri])
+                return self.convert_one(redirecting_uris[uri])
             else:
                 return None
 
