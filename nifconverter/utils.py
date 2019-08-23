@@ -11,13 +11,12 @@ DBPEDIA_PREFIX = 'http://dbpedia.org/resource/'
 DBPEDIA_PAGE_PREFIX = 'http://dbpedia.org/page/'
 
 
-def retry_request(url, parameters=None, timeout=10, delay=10):
+def retry_request(url, parameters=None, timeout=10, delay=10, retries=4):
     """
     Requests an URL with retries
     :returns: the Request object if succeeded
     """
     parameters = parameters or {}
-    retries = 4
     backoff = 2
     while retries:
         try:
@@ -41,8 +40,10 @@ def get_redirect(url):
     """
     # Sadly a HEAD request does not work for obscure encoding reasons...
     # See accompanying test case
+    if not url.startswith('http'):
+        return
     try:
-        req = retry_request(url)
+        req = retry_request(url, delay=3, retries=1)
     except requests.exceptions.RequestException:
         return
     location = req.url
