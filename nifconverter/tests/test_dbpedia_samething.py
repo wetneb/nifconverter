@@ -3,7 +3,12 @@ from __future__ import unicode_literals
 
 import unittest
 
+import pytest
+import requests_mock
+from requests import HTTPError
+
 from nifconverter.dbpedia_samething import SameThingConverter
+from nifconverter.settings import SAME_THING_SERVICE_URL
 from nifconverter.tests.dbpedia_bases import DBpediaTestBase
 
 
@@ -14,9 +19,31 @@ class FromDBpSameThingConverterTest(DBpediaTestBase.FromDBpediaBase):
 
 
 class ToDBpSameThingConverterTest(DBpediaTestBase.ToDBpediaBase):
+    unconvertible_uris = [
+        'mock://not.an.URI',
+        'mock://bad.domain/surprise',
+        'mock://www.wikidata.org/entity/null',
+    ]
+
     @classmethod
     def setUpClass(cls):
         cls.converter = SameThingConverter('http://dbpedia.org/resource/')
+
+    def test_some_uris_unconvertible(self):
+        some_bad_uris = self.unconvertible_uris + ['http://www.wikidata.org/entity/Q1985']
+        expected_mapping = {'http://www.wikidata.org/entity/Q1985': 'http://dbpedia.org/resource/2000'}
+        with requests_mock.Mocker() as req_mocker:
+            req_mocker.get('mock://', status_code=404)
+            req_mocker.get(SAME_THING_SERVICE_URL, real_http=True)
+            mapping = self.converter.convert(some_bad_uris)
+
+        self.assertEqual(expected_mapping, mapping)
+
+    def test_all_uris_unconvertible(self):
+        with pytest.raises(HTTPError) as excinfo:
+            self.converter.convert(self.unconvertible_uris)
+
+        assert '404' in str(excinfo.value)
 
 
 class MultilingualDBpSameThingConverterTest(unittest.TestCase):
