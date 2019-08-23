@@ -67,8 +67,38 @@ class SameThingConverter(URIConverter):
 
         Returns a map of results (from the original uri to the target uri).
         """
-        # todo: implement multiple URI lookup in Same Thing Service
-        return {
-            source_uri: self.convert_one(source_uri)
-            for source_uri in uris
-        }
+        resp = retry_request(
+            SAME_THING_SERVICE_URL,
+            {
+                'meta': 'off',
+                'uris': uris
+            }
+        )
+        resp.raise_for_status()
+        uri_map = resp.json()['uris']
+        results = {}
+
+        # try to resolve redirected resources
+        redirecting_uris = {}
+        if not all(uri_map.values()):
+            possible_redirects = [
+                source_uri
+                for source_uri, identifiers in uri_map.items()
+                if not identifiers
+            ]
+            redirecting_uris = fetch_redirecting_uris(possible_redirects, [None])
+
+        # filter target URIs
+        for source_uri, identifiers in uri_map.items():
+            if identifiers:
+                for target_uri in itertools.chain(
+                        [identifiers['global']],
+                        identifiers['locals']
+                ):
+                    if target_uri.startswith(self.target_prefix):
+                        results[source_uri] = target_uri
+                        break
+            elif source_uri in redirecting_uris:
+                results[source_uri] = self.convert_one(redirecting_uris[source_uri])
+
+        return results
