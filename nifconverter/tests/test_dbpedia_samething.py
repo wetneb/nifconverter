@@ -17,6 +17,10 @@ class FromDBpSameThingConverterTest(DBpediaTestBase.FromDBpediaBase):
     def setUpClass(cls):
         cls.converter = SameThingConverter('http://www.wikidata.org/entity/')
 
+    def test_single_redirect(self):
+        target_uri = self.converter.convert_one('http://dbpedia.org/page/Sebastiaan_Rutten')
+        assert 'http://www.wikidata.org/entity/Q704832' == target_uri
+
 
 class ToDBpSameThingConverterTest(DBpediaTestBase.ToDBpediaBase):
     unconvertible_uris = [
