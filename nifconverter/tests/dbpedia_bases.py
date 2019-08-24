@@ -50,7 +50,6 @@ class DBpediaTestBase:
 
         def test_is_convertible(self):
             self.assertTrue(self.converter.is_convertible('http://www.wikidata.org/entity/Q42'))
-            self.assertFalse(self.converter.is_convertible('http://en.wikipedia.org/wiki/Douglas_Adams'))
 
         def test_from_wikidata(self):
             mapping = self.converter.convert([

@@ -62,18 +62,18 @@ class FromDBpediaSparqlConverter(URIConverter):
 class ToDBpediaSparqlConverter(URIConverter):
     batch_size = 20
 
-    def __init__(self, source_prefix='http://www.wikidata.org/entity/'):
+    def __init__(self, target_prefix=DBPEDIA_PREFIX):
         """
         Creates a converter to DBpedia to one of the other URI schemes
         DBpedia knows of via owl:sameAs.
-
-        The source prefix is used to select these links.
         """
         super(ToDBpediaSparqlConverter, self).__init__(DBPEDIA_PREFIX)
-        self.source_prefix = source_prefix
+        if target_prefix != DBPEDIA_PREFIX:
+            raise ValueError('ToDBpediaSparqlConverter only supports converting to DBpedia URIs, starting with '+DBPEDIA_PREFIX)
 
     def is_convertible(self, uri):
-        return uri.startswith(self.source_prefix)
+        # TODO: find out which namespaces are available from the SPARQL interface
+        return True
 
     def convert(self, uris):
         """

@@ -16,4 +16,4 @@ class ToDBpediaSparqlConverterTest(DBpediaTestBase.ToDBpediaBase):
 
     @classmethod
     def setUpClass(cls):
-        cls.converter = ToDBpediaSparqlConverter('http://www.wikidata.org/entity/')
+        cls.converter = ToDBpediaSparqlConverter('http://dbpedia.org/resource/')

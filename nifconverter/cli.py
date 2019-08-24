@@ -36,7 +36,7 @@ def main(converter, target, infile, outfile, format):
     if converter_impl is None:
         raise click.BadParameter('Invalid converter "{}". Supported converters are: {}'.format(converter, get_available_converters()))
 
-    translator = NIFTranslator(converter_impl(target))
+    translator = NIFTranslator(converter_impl(target_prefix=target))
 
     with click.open_file(infile) as f:
         nif = NIFCollection.loads(f.read())
