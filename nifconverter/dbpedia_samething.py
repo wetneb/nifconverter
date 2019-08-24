@@ -18,7 +18,7 @@ class SameThingConverter(URIConverter):
     batch_size = 50
 
     def __init__(self, target_prefix='http://www.wikidata.org/entity/'):
-        self.target_prefix = target_prefix
+        super(SameThingConverter, self).__init__(target_prefix)
 
     def is_convertible(self, uri):
         # todo: https://github.com/dbpedia/dbp-same-thing-service/issues/9

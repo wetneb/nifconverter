@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 DBPEDIA_PREFIX = 'http://dbpedia.org/resource/'
 DBPEDIA_PAGE_PREFIX = 'http://dbpedia.org/page/'
-
+WIKIDATA_PREFIX = 'http://www.wikidata.org/entity/'
 
 def retry_request(url, parameters=None, timeout=10, delay=10, retries=4):
     """

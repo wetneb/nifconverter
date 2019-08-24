@@ -9,7 +9,7 @@ from .uriconverter import URIConverter
 from .utils import retry_request, fetch_redirecting_uris, DBPEDIA_PREFIX, DBPEDIA_PAGE_PREFIX
 
 
-class FromDBpediaConverter(URIConverter):
+class FromDBpediaSparqlConverter(URIConverter):
     batch_size = 20
 
     def __init__(self, target_prefix='http://en.wikipedia.org/wiki/'):
@@ -19,7 +19,7 @@ class FromDBpediaConverter(URIConverter):
 
         The target prefix is used to select these links.
         """
-        self.target_prefix = target_prefix
+        super(FromDBpediaSparqlConverter, self).__init__(target_prefix)
 
     def is_convertible(self, uri):
         return uri.startswith(DBPEDIA_PREFIX) or uri.startswith(DBPEDIA_PAGE_PREFIX)
@@ -59,7 +59,7 @@ class FromDBpediaConverter(URIConverter):
         }
 
 
-class ToDBpediaConverter(URIConverter):
+class ToDBpediaSparqlConverter(URIConverter):
     batch_size = 20
 
     def __init__(self, source_prefix='http://www.wikidata.org/entity/'):
@@ -69,6 +69,7 @@ class ToDBpediaConverter(URIConverter):
 
         The source prefix is used to select these links.
         """
+        super(ToDBpediaSparqlConverter, self).__init__(DBPEDIA_PREFIX)
         self.source_prefix = source_prefix
 
     def is_convertible(self, uri):

@@ -10,7 +10,7 @@ def test_invoke_cli():
     target_file = os.path.join(testdir, 'out.ttl')
 
     runner = CliRunner()
-    result = runner.invoke(main, ['--mode', 'dbr:wd', '-i', dbpedia_nif_path])
+    result = runner.invoke(main, ['-i', dbpedia_nif_path])
     assert result.exit_code == 0
 
     nif = pynif.NIFCollection.loads(result.output)
