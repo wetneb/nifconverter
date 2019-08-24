@@ -6,6 +6,15 @@ class URIConverter(object):
     """
     batch_size = 1
 
+    def __init__(self, target_prefix):
+        """
+        Initializes the converter to output URIs with the
+        given target prefix.
+        Subclasses can throw ValueError if the supplied
+        target prefix is not supported.
+        """
+        self.target_prefix = target_prefix
+
     def is_convertible(self, uri):
         """
         Is this URI convertible by this converter?

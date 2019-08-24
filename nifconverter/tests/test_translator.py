@@ -8,6 +8,9 @@ class DummyURIConverter(URIConverter):
     dbp_prefix = 'http://dbpedia.org/resource/'
     wp_prefix = 'http://en.wikipedia.org/wiki/'
 
+    def __init__(self):
+        super(DummyURIConverter, self).__init__(self.wp_prefix)
+
     def is_convertible(self, uri):
         return uri.startswith(self.dbp_prefix)
 
